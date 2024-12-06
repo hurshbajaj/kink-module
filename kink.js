@@ -6,6 +6,7 @@ class kink{
     }
 }
 
+//different endpoints used
 class dynamic{
     constructor(struct) {
         this.struct = struct;
@@ -69,6 +70,7 @@ class dynamic{
     }
 }
 
+//singular common endpoint used
 class dependent {
     constructor(structure) {
         if (!structure.url) {
