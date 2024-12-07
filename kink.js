@@ -3,13 +3,67 @@ class kink{
         //{independent} // {dynamic}
         this.type = structure.Dynamic === true?"Dynamic":"Dependent";
         this.handler = this.type === "Dynamic"? new dynamic(structure):new dependent(structure);
+
+        this.count = 0;
+    }
+
+    static parser(str){
+
+        let arr = str.split("");
+
+
+        arr.forEach((item, index)=>{
+
+            if(item === "-"){
+                arr.splice(index, 1, "+");
+                let alt = arr[index+1];
+                arr.splice(index+1, 1, alt * -1);// [a, - , b] => [a, +, -b]
+            }
+        })
+
+        arr.forEach((item, index)=>{
+            if(item === "%"){
+
+                let alt = Number(arr[index-1]) / Number(arr[index+1]);
+                arr.splice(index-1, 3, null, alt); //0 and alt in order to preserve index sequence
+            }
+        })
+        arr = arr.filter(item => item != null)
+
+        arr.forEach((item, index)=>{
+            if(item === "x"){
+
+                let alt = Number(arr[index-1]) * Number(arr[index+1]);
+                arr.splice(index-1, 3, null, alt); //0 and alt in order to preserve index sequence
+            }
+        })
+        arr = arr.filter(item => item != null)
+
+        arr.forEach((item, index)=>{
+            if(item === "+"){
+
+                let alt = Number(arr[index-1]) + Number(arr[index+1]);
+                arr.splice(index-1, 3, null, alt); //0 and alt in order to preserve index sequence
+            }
+
+        })
+        arr = arr.filter(item => item != null)
+
+        arr = arr.join()
+        console.log(arr);
     }
 }
+
+
 
 //different endpoints used
 class dynamic{
     constructor(struct) {
         this.struct = struct;
+
+        this.middleware = (res) => {
+            if (!res.ok) throw new Error("kink faced an issue, please revise your code");
+        }
     }
 
     async get(url, info={JSON_:true,  msg: true}){
@@ -65,8 +119,8 @@ class dynamic{
         return info.type === "json"? await this.res.json(): this.res;
     }
 
-    #evaluate(res){
-        if(res.ok) if(res.ok !== true) throw new Error("kink faced an issue, please revise your code");
+    #evaluate(res) {
+        this.middleware(res);
     }
 }
 
@@ -148,8 +202,7 @@ async function test(){
             console.log("test passed")
         }
     }
-    let data = await req.get()
-    console.log(data)
+    let data = await req.get();
 }
 
-test()
+kink.parser("1-1+2x2%2");
