@@ -1,56 +1,11 @@
 class kink{
+    static kork = [];
     constructor(structure){
         //{independent} // {dynamic}
         this.type = structure.Dynamic === true?"Dynamic":"Dependent";
         this.handler = this.type === "Dynamic"? new dynamic(structure):new dependent(structure);
 
         this.count = 0;
-    }
-
-    static parser(str){
-
-        let arr = str.split("");
-
-
-        arr.forEach((item, index)=>{
-
-            if(item === "-"){
-                arr.splice(index, 1, "+");
-                let alt = arr[index+1];
-                arr.splice(index+1, 1, alt * -1);// [a, - , b] => [a, +, -b]
-            }
-        })
-
-        arr.forEach((item, index)=>{
-            if(item === "%"){
-
-                let alt = Number(arr[index-1]) / Number(arr[index+1]);
-                arr.splice(index-1, 3, null, alt); //0 and alt in order to preserve index sequence
-            }
-        })
-        arr = arr.filter(item => item != null)
-
-        arr.forEach((item, index)=>{
-            if(item === "x"){
-
-                let alt = Number(arr[index-1]) * Number(arr[index+1]);
-                arr.splice(index-1, 3, null, alt); //0 and alt in order to preserve index sequence
-            }
-        })
-        arr = arr.filter(item => item != null)
-
-        arr.forEach((item, index)=>{
-            if(item === "+"){
-
-                let alt = Number(arr[index-1]) + Number(arr[index+1]);
-                arr.splice(index-1, 3, null, alt); //0 and alt in order to preserve index sequence
-            }
-
-        })
-        arr = arr.filter(item => item != null)
-
-        arr = arr.join()
-        console.log(arr);
     }
 }
 
@@ -205,4 +160,3 @@ async function test(){
     let data = await req.get();
 }
 
-kink.parser("1-1+2x2%2");
